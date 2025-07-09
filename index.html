@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mind Reader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: white;
+      font-family: Arial, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      text-align: center;
+      transform: scale(1.8);
+      transform-origin: center;
+    }
+
+    h1 {
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100px;
+      padding: 10px;
+      text-align: center;
+      font-size: 24px;
+      border: 2px solid #aaa;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 24px;
+      margin-top: 20px;
+      background: #eee;
+      border: 2px solid #aaa;
+      cursor: pointer;
+    }
+
+    .progress-wrapper {
+      width: 400px;
+      height: 30px;
+      background-color: #e0e0e0;
+      border: 2px solid #999;
+      margin: 30px auto;
+      display: none;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: green;
+      transition: width 0.5s ease;
+    }
+
+    #statusText {
+      font-weight: bold;
+      font-size: 24px;
+      margin-top: 10px;
+    }
+
+    .error-box {
+      position: fixed;
+      width: 90vw;
+      height: 80vh;
+      background: #f0f0f0;
+      border: 3px solid #000080;
+      box-shadow: 8px 8px #444;
+      font-family: Tahoma, sans-serif;
+      font-size: 18px;
+      z-index: 9999;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .error-title {
+      background: linear-gradient(to right, #000080, #4169e1);
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 20px;
+      text-align: left;
+    }
+
+    .error-body {
+      flex: 1;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .error-buttons {
+      text-align: right;
+      padding: 20px;
+      background: #ddd;
+      border-top: 1px solid #aaa;
+    }
+
+    .error-buttons button {
+      font-size: 18px;
+      padding: 8px 20px;
+      margin-left: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        transform: scale(1);
+        padding: 20px;
+        width: 100%;
+      }
+
+      .error-box {
+        width: 95vw;
+        height: 90vh;
+        font-size: 16px;
+      }
+
+      .error-title {
+        font-size: 18px;
+        padding: 10px;
+      }
+
+      .error-body {
+        padding: 20px;
+      }
+
+      .error-buttons {
+        padding: 15px;
+      }
+
+      .error-buttons button {
+        font-size: 16px;
+        padding: 6px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Pick any number you want, I will read your mind</h1>
+    <input type="number" id="numberInput" />
+    <br />
+    <button id="readBtn">Read my Mind</button>
+
+    <div class="progress-wrapper" id="progressWrapper">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <p id="statusText"></p>
+  </div>
+
+  <script>
+    const input = document.getElementById("numberInput");
+    const button = document.getElementById("readBtn");
+    const progressWrapper = document.getElementById("progressWrapper");
+    const progressBar = document.getElementById("progressBar");
+    const statusText = document.getElementById("statusText");
+
+    const messages = [
+      "READING YOUR MIND....",
+      "ANALYZING YOUR BRAIN....",
+      "CONNECTING TO YOUR BRAIN VIA BLUETOOTH....",
+      "APPLYING E=mc²...."
+    ];
+
+    button.addEventListener("click", () => {
+      const number = input.value.trim();
+      if (!number) {
+        alert("Please enter a number first.");
+        return;
+      }
+
+      button.disabled = true;
+      input.disabled = true;
+      progressWrapper.style.display = "block";
+      progressBar.style.width = "0%";
+      statusText.textContent = "";
+
+      let stage = 0;
+      let progress = 0;
+
+      const interval = setInterval(() => {
+        if (progress >= 100) {
+          clearInterval(interval);
+          progressWrapper.style.display = "none";
+          statusText.textContent = "";
+
+          const sound = new Audio("https://www.myinstants.com/media/sounds/windows-error-sound.mp3");
+          sound.play();
+
+          spawnFinalBox(number);
+        } else {
+          progress += 25;
+          progressBar.style.width = progress + "%";
+          statusText.textContent = messages[stage++] || "";
+        }
+      }, 1000);
+    });
+
+    function spawnFinalBox(number) {
+      const box = document.createElement("div");
+      box.className = "error-box";
+
+      const title = document.createElement("div");
+      title.className = "error-title";
+      title.textContent = "Mind Reader";
+
+      const body = document.createElement("div");
+      body.className = "error-body";
+      body.innerHTML = `
+        <div style="
+          font-size: clamp(24px, 5vw, 60px);
+          font-weight: bold;
+          text-align: center;
+        ">
+          💡 The number you were thinking of is:<br>
+          <span style="font-size: 1.5em; color: darkred;">${number}</span>
+        </div>
+      `;
+
+      const buttons = document.createElement("div");
+      buttons.className = "error-buttons";
+      const ok = document.createElement("button");
+      ok.textContent = "OK";
+      ok.onclick = () => {
+        box.remove();
+        button.disabled = false;
+        input.disabled = false;
+        input.value = "";
+      };
+      buttons.appendChild(ok);
+
+      box.appendChild(title);
+      box.appendChild(body);
+      box.appendChild(buttons);
+
+      document.body.appendChild(box);
+    }
+  </script>
+</body>
+</html>
