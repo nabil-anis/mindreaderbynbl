@@ -182,6 +182,10 @@
     const progressBar = document.getElementById("progressBar");
     const statusText = document.getElementById("statusText");
 
+    // ✅ Preload and reuse the same Audio object
+    const errorSound = new Audio("https://www.myinstants.com/media/sounds/windows-error-sound.mp3");
+    errorSound.preload = "auto";
+
     const messages = [
       "READING YOUR MIND....",
       "ANALYZING YOUR BRAIN....",
@@ -211,8 +215,9 @@
           progressWrapper.style.display = "none";
           statusText.textContent = "";
 
-          const sound = new Audio("https://www.myinstants.com/media/sounds/windows-error-sound.mp3");
-          sound.play();
+          // ✅ Reset and play the preloaded sound
+          errorSound.currentTime = 0;
+          errorSound.play();
 
           spawnFinalBox(number);
         } else {
